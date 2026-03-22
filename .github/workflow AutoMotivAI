@@ -1,0 +1,89 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
+Since your project requires automating uploads to your YouTube channel (@Risedailynow2), the "Service Account" method (using that .pem file) will not work. You must use OAuth 2.0 to get a Refresh Token.
+Follow these steps to get the specific credentials you need for your GitHub Secrets.
+Phase 1: Get your Client ID and Secret
+ * Go to the Google Cloud Console.
+ * Enable the API: Search for "YouTube Data API v3" and click Enable.
+ * OAuth Consent Screen: * Set User Type to External.
+   * Crucial: Add your own email address to the "Test Users" list.
+ * Create Credentials: * Go to Credentials > Create Credentials > OAuth client ID.
+   * Select Desktop app as the application type.
+   * Download the resulting JSON file and rename it to credentials.json.
+Phase 2: Get your Refresh Token (The "Missing Link")
+Since GitHub Actions cannot "click" a login button, you must generate the refresh token on your own computer first.
+1. Install the tools:
+Open your computer's terminal (or command prompt) and run:
+pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
+2. Run this "Token Maker" script:
+Create a file named get_token.py in the same folder as your credentials.json and paste this:
+from google_auth_oauthlib.flow import InstalledAppFlow
+
+# The scope for uploading to YouTube
+SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
+
+def get_refresh_token():
+    flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+    # This will open a browser window for you to log in
+    creds = flow.run_local_server(port=0)
+    
+    print("\n✅ Success! Copy these three values into your GitHub Secrets:")
+    print(f"CLIENT_ID: {creds.client_id}")
+    print(f"CLIENT_SECRET: {creds.client_secret}")
+    print(f"REFRESH_TOKEN: {creds.refresh_token}")
+
+if __name__ == '__main__':
+    get_refresh_token()
+
+3. Execute: Run python get_token.py. A browser will open; log in with the account for @Risedailynow2. The script will then print your Refresh Token in the terminal.
+Phase 3: Secure your GitHub Repo
+Now that you have the three values, go to your Risedailynow2 repository on GitHub:
+ * Settings > Secrets and variables > Actions.
+ * Add these New repository secrets:
+   * YOUTUBE_CLIENT_ID
+   * YOUTUBE_CLIENT_SECRET
+   * YOUTUBE_REFRESH_TOKEN
+Phase 4: Create the "Healthy" Structure
+To finish matching the blueprint from your screenshot, your repository should look like this:
+| File/Folder | Action |
+|---|---|
+| .gitignore | Create this and add *.json and *.pem to keep it safe. |
+| main.py | This script will now use the secrets to upload your videos. |
+| requirements.txt | Add google-api-python-client and google-auth-oauthlib here. |
+Would you like me to write the final main.py code that uses these new secrets to upload a video from your assets/ folder?
+Since I can't access that private Macaron link directly, I’ll help you build the structure based on the "healthy" blueprint you shared earlier. Because your Risedailynow2 repo is currently empty, we’re going to fill it with the essential files. Here is the exact plan to get your automation running. 1. Create the Workflow (The "Brain") This is the most important file. It tells GitHub to run your Python scripts automatically. * In your GitHub repo, click "creating a new file." * In the name box, type exactly: .github/workflows/main.yml * Paste this basic starter code inside: name: AutoMotivAI Automation on: schedule: - cron: '0 9 * * *' # Runs every day at 9:00 AM UTC workflow_dispatch: # Allows you to run it manually jobs: build: runs-on: ubuntu-latest steps: - name: Checkout code uses: actions/checkout@v3 - name: Set up Python uses: actions/setup-python@v4 with: python-version: '3.9' - name: Install dependencies run: | python -m pip install --upgrade pip pip install -r requirements.txt - name: Run Script run: python main.py 2. Create the Project Folders GitHub doesn't let you create empty folders, so you have to create a "dummy" file inside them. * For Scripts: Create a file named scripts/.gitkeep * For Assets: Create a file named assets/.gitkeep * For Outputs: Create a file named output/.gitkeep 3. The Support Files Create these two files in the root (main) folder: * requirements.txt: Add the libraries your project needs (e.g., google-api-python-client, google-auth-oauthlib, Pillow). * main.py: This is your actual code. If you have the code from Macaron, paste it here. If not, we can write a starter script that uses the OAuth token you mentioned. Summary of your new structure: Once you do this, your repo will look like this: Risedailynow2/ ├── .github/ │ └── workflows/ │ └── main.yml ├── assets/ ├── output/ ├── scripts/ ├── main.py └── requirements.txt To get your Risedailynow2 automation running, we need a functional main.py. Since your project involves AutoMotivAI (likely for generating and uploading motivational content), I’ve written a starter script that handles the core logic: authenticating with Google, checking your assets, and preparing for an upload. 1. Create main.py Go to your GitHub repo, click "Add file" > "Create new file", name it main.py, and paste this: import os import json def check_setup(): print("--- 🚀 AutoMotivAI: Starting Automation ---") # Check if necessary folders exist folders = ['assets', 'output', 'scripts'] for folder in folders: if os.path.exists(folder): print(f"✅ Folder found: {folder}") else: print(f"❌ Folder missing: {folder}") # Look for your OAuth Secret (Stored in GitHub Secrets) client_secret = os.getenv('GOOGLE_CLIENT_SECRET') if client_secret: print("✅ Google API Credentials loaded from Secrets.") else: print("⚠️ Warning: GOOGLE_CLIENT_SECRET not found in Environment Variables.") def generate_content(): print("--- 📝 Generating Motivational Content ---") # This is where your specific video/image logic goes # For now, we'll just simulate a successful run print("Success: Content ready for processing.") if __name__ == "__main__": check_setup() generate_content() print("--- 🏁 Automation Finished ---") 2. Create requirements.txt Create another new file named requirements.txt and add these common libraries: google-api-python-client google-auth-oauthlib google-auth-httplib2 Pillow requests 3
