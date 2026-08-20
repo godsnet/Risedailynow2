@@ -17,7 +17,7 @@ integrations = [
   "Pillow>=10.4,<12",
   "requests>=2.32,<3",
 ]
-test = ["pytest>=8.3,<9"]
+test = ["pytest>=8.3,<10"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
