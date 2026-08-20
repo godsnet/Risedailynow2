@@ -14,7 +14,7 @@ integrations = [
   "google-api-python-client>=2.149,<3",
   "google-auth-httplib2>=0.2,<1",
   "google-auth-oauthlib>=1.2,<2",
-  "Pillow>=10.4,<12",
+  "Pillow>=10.4,<13",
   "requests>=2.32,<3",
 ]
 test = ["pytest>=8.3,<9"]
