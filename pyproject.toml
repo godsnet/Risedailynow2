@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "automotivai"
+version = "1.0.0"
+description = "A safe runtime foundation for AutoMotivAI automation."
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+integrations = [
+  "google-api-python-client>=2.149,<3",
+  "google-auth-httplib2>=0.2,<1",
+  "google-auth-oauthlib>=1.2,<2",
+  "Pillow>=10.4,<12",
+  "requests>=2.32,<3",
+]
+test = ["pytest>=8.3,<9"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.setuptools]
+py-modules = ["main"]

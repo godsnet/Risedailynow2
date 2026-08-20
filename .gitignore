@@ -1,0 +1,25 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+
+# Local secrets and provider credentials
+.env
+.env.*
+!.env.example
+credentials.json
+*.json
+*.pem
+*.p12
+*.key
+
+# Generated content
+assets/*
+!assets/.gitkeep
+output/*
+!output/.gitkeep
